@@ -132,7 +132,7 @@ var {
 
 // src/components/Box.tsx
 var Box = styled("div", {
-  padding: "$4",
+  padding: "$6",
   borderRadius: "$md",
   backgroundColor: "$gray800",
   border: "1px solid $gray600"
@@ -197,8 +197,8 @@ import * as Avatar from "@radix-ui/react-avatar";
 var AvatarContainer = styled(Avatar.Root, {
   borderRadius: "$full",
   display: "inline-block",
-  width: "$12",
-  height: "$12",
+  width: "$16",
+  height: "$16",
   overflow: "hidden"
 });
 var AvatarImage = styled(Avatar.Image, {
@@ -255,6 +255,9 @@ var Button = styled("button", {
   "&:disabled": {
     cursor: "not-allowed"
   },
+  "&:focus": {
+    boxShadow: "0 0 0 2px $colors$gray100"
+  },
   variants: {
     variant: {
       primary: {
@@ -305,6 +308,9 @@ var Button = styled("button", {
 });
 Button.displayName = "Button";
 
+// src/components/TextInput/index.tsx
+import { forwardRef } from "react";
+
 // src/components/TextInput/styles.ts
 var TextInputContainer = styled("div", {
   backgroundColor: "$gray900",
@@ -313,13 +319,26 @@ var TextInputContainer = styled("div", {
   boxSizing: "border-box",
   border: "2px solid $gray900",
   display: "flex",
-  alignItems: "baseline",
+  alignItems: "center",
+  variants: {
+    size: {
+      sm: {
+        padding: "$2 $3"
+      },
+      md: {
+        padding: "$3 $4"
+      }
+    }
+  },
   "&:has(input:focus)": {
     borderColor: "$ignite300"
   },
   "&:has(input:disabled)": {
     opacity: 0.5,
     cursor: "not-allowed"
+  },
+  defaultVariants: {
+    size: "md"
   }
 });
 var Prefix = styled("span", {
@@ -342,20 +361,22 @@ var Input = styled("input", {
   "&:disabled": {
     cursor: "not-allowed"
   },
-  "&:placeholder": {
+  "&::placeholder": {
     color: "$gray400"
   }
 });
 
 // src/components/TextInput/index.tsx
 import { jsx as jsx2, jsxs as jsxs2 } from "react/jsx-runtime";
-function TextInput(_a) {
-  var _b = _a, { prefix } = _b, props = __objRest(_b, ["prefix"]);
-  return /* @__PURE__ */ jsxs2(TextInputContainer, { children: [
-    !!prefix && /* @__PURE__ */ jsx2(Prefix, { children: prefix }),
-    /* @__PURE__ */ jsx2(Input, __spreadValues({}, props))
-  ] });
-}
+var TextInput = forwardRef(
+  (_a, ref) => {
+    var _b = _a, { prefix } = _b, props = __objRest(_b, ["prefix"]);
+    return /* @__PURE__ */ jsxs2(TextInputContainer, { children: [
+      !!prefix && /* @__PURE__ */ jsx2(Prefix, { children: prefix }),
+      /* @__PURE__ */ jsx2(Input, __spreadValues({ ref }, props))
+    ] });
+  }
+);
 TextInput.displayName = "TextInput";
 
 // src/components/TextArea.tsx
@@ -380,7 +401,7 @@ var TextArea = styled2("textarea", {
     opacity: 0.5,
     cursor: "not-allowed"
   },
-  "&:placeholder": {
+  "&::placeholder": {
     color: "$gray400"
   }
 });
@@ -406,7 +427,7 @@ var CheckboxContainer = styled(Checkbox.Root, {
   '&[data-state="checked"]': {
     backgroundColor: "$ignite300"
   },
-  "&:focus": {
+  '&:focus, &[data-state="checked"]': {
     borderColor: "$ignite300"
   }
 });
@@ -491,6 +512,131 @@ function MultiStep({ size, currentStep = 1 }) {
   ] });
 }
 MultiStep.displayName = "MultiStep";
+
+// src/components/Tooltip/styles.ts
+import * as Tooltip from "@radix-ui/react-tooltip";
+var TooltipProvider = styled(Tooltip.Provider, {});
+var TooltipRoot = styled(Tooltip.Root, {});
+var TooltipTrigger = styled(Tooltip.Trigger, {});
+var TooltipPortal = styled(Tooltip.Portal, {});
+var TooltipContent = styled(Tooltip.Content, {
+  padding: "$3 $4",
+  borderRadius: "$sm",
+  backgroundColor: "$gray900",
+  filter: "drop-shadow(4px 16px 24px rgba(0, 0, 0, 0.25))"
+});
+var TooltipArrow = styled(Tooltip.Arrow, {
+  width: "$4",
+  height: "$2",
+  fill: "$gray900"
+});
+
+// src/components/Tooltip/index.tsx
+import { jsx as jsx5, jsxs as jsxs4 } from "react/jsx-runtime";
+function Tooltip2(_a) {
+  var _b = _a, { children, content } = _b, props = __objRest(_b, ["children", "content"]);
+  return /* @__PURE__ */ jsx5(TooltipProvider, { children: /* @__PURE__ */ jsxs4(TooltipRoot, __spreadProps(__spreadValues({}, props), { delayDuration: 100, children: [
+    /* @__PURE__ */ jsx5(TooltipTrigger, { asChild: true, children }),
+    /* @__PURE__ */ jsx5(TooltipPortal, { children: /* @__PURE__ */ jsxs4(TooltipContent, { sideOffset: -15, children: [
+      /* @__PURE__ */ jsx5(Text, { size: "sm", children: content }),
+      /* @__PURE__ */ jsx5(TooltipArrow, {})
+    ] }) })
+  ] })) });
+}
+Tooltip2.displayName = "Tooltip";
+
+// src/components/Toast/styles.ts
+import * as Toast from "@radix-ui/react-toast";
+var VIEWPORT_PADDING = 32;
+var hide = keyframes({
+  "0%": { opacity: 1 },
+  "100%": { opacity: 0 }
+});
+var slideIn2 = keyframes({
+  from: { transform: `translateX(calc(100% + ${VIEWPORT_PADDING}px))` },
+  to: { transform: "translateX(0)" }
+});
+var swipeOut = keyframes({
+  from: { transform: "translateX(var(--radix-toast-swipe-end-x))" },
+  to: { transform: `translateX(calc(100% + ${VIEWPORT_PADDING}px))` }
+});
+var ToastProvider = styled(Toast.Provider, {});
+var ToastRoot = styled(Toast.Root, {
+  padding: "$3 $4",
+  background: "$gray800",
+  border: "1px solid $gray600",
+  borderRadius: "$sm",
+  fontFamily: "$default",
+  position: "relative",
+  '&[data-state="open"]': {
+    animation: `${slideIn2} 150ms cubic-bezier(0.16, 1, 0.3, 1)`
+  },
+  '&[data-state="closed"]': {
+    animation: `${hide} 100ms ease-in`
+  },
+  '&[data-swipe="move"]': {
+    transform: "translateX(var(--radix-toast-swipe-move-x))"
+  },
+  '&[data-swipe="cancel"]': {
+    transform: "translateX(0)",
+    transition: "transform 200ms ease-out"
+  },
+  '&[data-swipe="end"]': {
+    animation: `${swipeOut} 100ms ease-out`
+  }
+});
+var ToastTitle = styled(Toast.Title, {
+  color: "$white",
+  fontWeight: "$bold",
+  fontSize: "$xl",
+  lineHeight: "$base"
+});
+var ToastDescription = styled(Toast.Description, {
+  color: "$gray200",
+  fontSize: "$sm",
+  lineHeight: "$base",
+  marginTop: "$1"
+});
+var ToastClose = styled(Toast.Close, {
+  position: "absolute",
+  top: "$4",
+  right: "$4",
+  background: "none",
+  border: "none",
+  color: "$gray200",
+  cursor: "pointer"
+});
+var ToastViewport = styled(Toast.Viewport, {
+  position: "fixed",
+  bottom: 0,
+  right: 0,
+  display: "flex",
+  flexDirection: "column",
+  gap: 10,
+  padding: VIEWPORT_PADDING,
+  width: 390,
+  maxWidth: "100%",
+  margin: 0,
+  listStyle: "none",
+  zIndex: 9999,
+  outline: "none"
+});
+
+// src/components/Toast/index.tsx
+import { X } from "phosphor-react";
+import { jsx as jsx6, jsxs as jsxs5 } from "react/jsx-runtime";
+function Toast2(_a) {
+  var _b = _a, { title, description } = _b, props = __objRest(_b, ["title", "description"]);
+  return /* @__PURE__ */ jsxs5(ToastProvider, { children: [
+    /* @__PURE__ */ jsxs5(ToastRoot, __spreadProps(__spreadValues({}, props), { children: [
+      /* @__PURE__ */ jsx6(ToastTitle, { children: title }),
+      description && /* @__PURE__ */ jsx6(ToastDescription, { children: description }),
+      /* @__PURE__ */ jsx6(ToastClose, { children: /* @__PURE__ */ jsx6(X, { size: 20, weight: "light" }) })
+    ] })),
+    /* @__PURE__ */ jsx6(ToastViewport, {})
+  ] });
+}
+Toast2.displayName = "Toast";
 export {
   Avatar2 as Avatar,
   Box,
@@ -500,5 +646,15 @@ export {
   MultiStep,
   Text,
   TextArea,
-  TextInput
+  TextInput,
+  Toast2 as Toast,
+  Tooltip2 as Tooltip,
+  config,
+  createTheme,
+  css,
+  getCssText,
+  globalCss,
+  keyframes,
+  styled,
+  theme
 };
